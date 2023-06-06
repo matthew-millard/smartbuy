@@ -1,6 +1,7 @@
 # SmartBuy Backend Code
 
-![MIT License Badge](https://img.shields.io/github/license/matthew-millard/smartbuy?logo=MIT) ![Github Contributors Badge](https://img.shields.io/github/contributors/matthew-millard/smartbuy)
+![MIT License Badge](https://img.shields.io/github/license/matthew-millard/smartbuy?logo=MIT) 
+![Github Contributors Badge](https://img.shields.io/github/contributors/matthew-millard/smartbuy)
 
 ## Description
 
@@ -17,6 +18,7 @@ This project is an implementation of a robust Express.js API that's been configu
 - [Screenshots](#screenshots)
 - [Technologies Used](#technologies-used)
 - [Node Packages Used](#node-packages-used)
+- [Contributors](#contributors)
 - [Contribution](#contribution)
 - [License](#license)
 - [Questions](#questions)
@@ -90,6 +92,14 @@ SmartBuy: [Github Repository](https://github.com/matthew-millard/smartbuy)
 - dotenv ^16.0.3
 
 - mysql2 ^3.3.2
+
+## Contributors
+
+[Matthew Millard](https://github.com/matthew-millard)
+
+[Xander Rapstine](https://github.com/Xandromus)
+
+[Georgeyoo](https://github.com/Georgeyoo)
 
 ## Contribution
 
