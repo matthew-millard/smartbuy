@@ -11,14 +11,13 @@ router.get('/', async (req, res) => {
     });
     // Checks if the categories array is empty
     if (categories.length === 0) {
-      res.status(404).json({ message: 'No categories found.' });
-      return;
+      return res.status(404).json({ message: 'No categories found.' });
     }
 
-    res.status(200).json(categories);
+    return res.status(200).json(categories);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -31,16 +30,15 @@ router.get('/:id', async (req, res) => {
     });
     // Checks if category is null
     if (!category) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `No categories were found with the id: ${categoryId}`,
       });
-      return;
     }
 
-    res.status(200).json(category);
+    return res.status(200).json(category);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -54,16 +52,15 @@ router.post('/', async (req, res) => {
       typeof category_name !== 'string' ||
       category_name.trim().length === 0
     ) {
-      res.status(400).json({ message: 'Invalid category name.' });
-      return;
+      return res.status(400).json({ message: 'Invalid category name.' });
     }
     await Category.create({ category_name });
-    res.status(200).json({
+    return res.status(200).json({
       message: `The category ${category_name} was created successfully.`,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -78,8 +75,7 @@ router.put('/:id', async (req, res) => {
       category_name.trim().length === 0 ||
       isNaN(categoryId)
     ) {
-      res.status(400).json({ message: 'Invalid category name or id.' });
-      return;
+      return res.status(400).json({ message: 'Invalid category name or id.' });
     }
     const affectedRows = await Category.update(
       { category_name },
@@ -100,13 +96,13 @@ router.put('/:id', async (req, res) => {
     // Get update category
     const updatedCategory = await Category.findByPk(categoryId);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: `${affectedRows[0]} row has been successfully updated.`,
       category: updatedCategory, // Display updated category to user
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -114,27 +110,23 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const categoryId = Number(req.params.id);
+    const deletedCategories = await Category.destroy({
+      where: { id: categoryId },
+    });
 
-    // Checks if categoryId is a number
-    if (isNaN(categoryId)) {
-      res.status(400).json({ message: 'Invalid category id.' });
-      return;
-    }
-    const deletedRows = await Category.destroy({ where: { id: categoryId } });
-
-    if (deletedRows === 0) {
-      res
+    // Checks if deletedCategories is 0
+    if (deletedCategories === 0) {
+      return res
         .status(404)
         .json({ message: `No category found with the id: ${categoryId}` });
-      return;
     }
 
-    res
+    return res
       .status(200)
-      .json({ message: `Category with id: ${categoryId} was deleted.` });
+      .json({ message: `Category was deleted successfully.` });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 });
 
