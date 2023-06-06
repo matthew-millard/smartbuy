@@ -63,8 +63,33 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update a tag's name by its `id` value
+  try {
+    const tagId = Number(req.params.id);
+    const { tag_name } = req.body;
+
+    // Checks if tag_name is a string and exists
+    if (typeof tag_name !== 'string' || tag_name.trim().length === 0) {
+      return res.status(400).json({ message: 'Tag name is invalid.' });
+    }
+
+    // Updates the tag
+    const updatedCount = await Tag.update(
+      { tag_name: tag_name },
+      { where: { id: tagId } }
+    );
+
+    // Checks if updatedCount is 0
+    if (updatedCount[0] === 0) {
+      return res.status(404).json({ message: 'No tag found with that id.' });
+    }
+
+    return res.status(200).json({ message: 'Tag name updated successfully.' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server Error' });
+  }
 });
 
 // delete on tag by its `id` value
