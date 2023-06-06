@@ -1,8 +1,6 @@
 # SmartBuy Backend Code
 
-![MIT License Badge](https://img.shields.io/github/license/matthew-millard/smartbuy?logo=MIT)
-
-![Github Contributors Badge](https://img.shields.io/github/contributors/matthew-millard/smartbuy)
+![MIT License Badge](https://img.shields.io/github/license/matthew-millard/smartbuy?logo=MIT) ![Github Contributors Badge](https://img.shields.io/github/contributors/matthew-millard/smartbuy)
 
 ## Description
 
