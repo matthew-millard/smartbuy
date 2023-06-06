@@ -85,32 +85,75 @@ router.post('/', async (req, res) => {
 // update product
 router.put('/:id', async (req, res) => {
   try {
-    const productId = req.params.id;
+    const productId = Number(req.params.id);
     const { product_name, price, stock, tagIds } = req.body;
 
-    // update product data
-    const updatedCount = await Product.update(product_name, price, stock, {
-      where: {
-        id: productId,
-      },
-    });
-
-    // Checks if updatedCount is 0
-    if (updatedCount[0] === 0) {
-      return res
-        .status(404)
-        .json({ message: 'No product found with that id.' });
+    // Validate inputs
+    if (
+      !productId ||
+      !product_name ||
+      !price ||
+      !stock ||
+      !Array.isArray(tagIds)
+    ) {
+      return res.status(400).json({ message: 'Invalid input' });
     }
 
-    // find all associated tags from ProductTag
+    // Update the product first
+    const updatedCount = await Product.update(
+      {
+        product_name,
+        price,
+        stock,
+      },
+      {
+        where: {
+          id: productId,
+        },
+      }
+    );
+
+    // Checks if updatedCount is 0
+    if (updatedCount === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Find all associated tags from ProductTag
     const productTags = await ProductTag.findAll({
       where: { product_id: productId },
     });
 
-    // get list of current tag_ids
+    // Get list of current tag_ids
     const productTagIds = productTags.map(({ tag_id }) => tag_id);
 
-    // *** Incomplete - TO DO ***
+    // Create filtered list of new tag_ids
+    const newProductTags = tagIds
+      .filter((tag_id) => !productTagIds.includes(tag_id))
+      .map((tag_id) => {
+        return {
+          product_id: productId,
+          tag_id,
+        };
+      });
+
+    // Figure out which ones to remove
+    const productTagsToRemove = productTags
+      .filter(({ tag_id }) => !tagIds.includes(tag_id))
+      .map(({ id }) => id);
+
+    // Run both actions
+    await Promise.all([
+      ProductTag.destroy({ where: { id: productTagsToRemove } }),
+      ProductTag.bulkCreate(newProductTags),
+    ]);
+
+    // Respond with the updated product information
+    const resultProduct = await Product.findOne({
+      where: { id: productId },
+      include: [{ model: Category }, { model: Tag }],
+    });
+
+    return res.status(200).json(resultProduct);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server Error' });
